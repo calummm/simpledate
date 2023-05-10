@@ -4,17 +4,17 @@ export {};
 type SimpleDateInput = SimpleDate | Date | String;
 
 type SimpleDateModPeriod =
-  | "year"
-  | "years"
-  | "month"
-  | "months"
-  | "week"
-  | "weeks"
-  | "day"
-  | "days";
+  | 'year'
+  | 'years'
+  | 'month'
+  | 'months'
+  | 'week'
+  | 'weeks'
+  | 'day'
+  | 'days';
 
 export class SimpleDate {
-  invalidDateMessage = "Invalid Date";
+  invalidDateMessage = 'Invalid Date';
 
   year: number;
   month: number;
@@ -29,6 +29,8 @@ export class SimpleDate {
 
   /** A serialised number formed from padded year, month and day. Ideal for comparing and sorting */
   serial = NaN;
+
+  private readonly defaultDate = new Date();
 
   constructor(
     date?: SimpleDateInput,
@@ -45,7 +47,7 @@ export class SimpleDate {
       this.monthIndex = Number(this.month) - 1;
       this.month = Number(month);
       this.day = Number(day);
-    } else if (typeof date === "string" && date !== this.invalidDateMessage) {
+    } else if (typeof date === 'string' && date !== this.invalidDateMessage) {
       // Remove ISO8601 time if present
       const timeMaker = date.search(/[0-9]T/);
       if (timeMaker !== -1) {
@@ -62,6 +64,13 @@ export class SimpleDate {
           [this.year, , this.day] = parts.map((part) => Number(part));
         } else {
           [this.day, , this.year] = parts.map((part) => Number(part));
+
+          if (String(this.year).length === 2) {
+            this.year = Number(
+              String(this.defaultDate.getFullYear()).slice(0, 2) +
+                String(this.year)
+            );
+          }
         }
 
         //Extract month if words = use dummy date to avoid data smoothing
@@ -79,23 +88,22 @@ export class SimpleDate {
       this.day = date.getDate();
     }
 
-    // this.isValid = this.isValidRaw(this.year, this.monthIndex, this.day);
-
+    this.isValid = this.isValidManual(this.year, this.monthIndex, this.day);
     this.date = new Date(this.year, this.monthIndex, this.day, 0, 0, 0); // Need zeroing?
-    this.isValid = !isNaN(this.date.getTime());
+    // this.isValid = !isNaN(this.date.getTime());
 
     if (this.isValid) {
       // this.date = new Date(this.year, this.monthIndex, this.day, 0, 0, 0); // Need zeroing?
       this.month = this.monthIndex + 1;
 
       const parts = [
-        String(this.year).padStart(4, "0"),
-        String(this.month).padStart(2, "0"),
-        String(this.day).padStart(2, "0"),
+        String(this.year).padStart(4, '0'),
+        String(this.month).padStart(2, '0'),
+        String(this.day).padStart(2, '0'),
       ];
 
-      this.iso = parts.join("-");
-      this.serial = Number(parts.join(""));
+      this.iso = parts.join('-');
+      this.serial = Number(parts.join(''));
     }
 
     Object.freeze(this);
@@ -114,7 +122,7 @@ export class SimpleDate {
     }
 
     // todo long medium short
-    return [this.day, this.month, this.year].join("/");
+    return [this.day, this.month, this.year].join('/');
   }
 
   toValue(): number {
@@ -173,22 +181,22 @@ export class SimpleDate {
 
     const refDate = new Date(this.date);
 
-    if (type === "year" || type === "years") {
+    if (type === 'year' || type === 'years') {
       refDate.setFullYear(refDate.getFullYear() + Number(num));
       return new SimpleDate(refDate);
     }
 
-    if (type === "month" || type === "months") {
+    if (type === 'month' || type === 'months') {
       refDate.setMonth(refDate.getMonth() + Number(num));
       return new SimpleDate(refDate);
     }
 
-    if (type === "week" || type === "weeks") {
+    if (type === 'week' || type === 'weeks') {
       refDate.setDate(refDate.getDate() + Number(num) * 7);
       return new SimpleDate(refDate);
     }
 
-    if (type === "day" || type === "days") {
+    if (type === 'day' || type === 'days') {
       refDate.setDate(refDate.getDate() + Number(num));
       return new SimpleDate(refDate);
     }
@@ -211,5 +219,34 @@ export class SimpleDate {
     }
 
     return new SimpleDate(date);
+  }
+
+  private isValidManual(
+    year: number,
+    monthIndex: number,
+    day: number
+  ): boolean {
+    if (Number.isNaN(year) || Number.isNaN(monthIndex) || Number.isNaN(day)) {
+      return false;
+    }
+
+    if (
+      //String(year).length !== 4 || // TODO
+      monthIndex < 0 ||
+      monthIndex > 11 ||
+      day < 1 ||
+      day > 31
+    ) {
+      return false;
+    }
+
+    const monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+    // Leap years
+    if (year % 400 === 0 || (year % 100 !== 0 && year % 4 === 0)) {
+      monthLength[1] = 29;
+    }
+
+    return day <= monthLength[monthIndex];
   }
 }
