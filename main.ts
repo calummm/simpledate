@@ -89,10 +89,10 @@ export class SimpleDate {
     }
 
     this.isValid = this.isValidManual(this.year, this.monthIndex, this.day);
-    this.date = new Date(this.year, this.monthIndex, this.day, 0, 0, 0); // Need zeroing?
     // this.isValid = !isNaN(this.date.getTime());
 
     if (this.isValid) {
+      this.date = new Date(this.year, this.monthIndex, this.day, 0, 0, 0); // Need zeroing?
       // this.date = new Date(this.year, this.monthIndex, this.day, 0, 0, 0); // Need zeroing?
       this.month = this.monthIndex + 1;
 
