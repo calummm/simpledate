@@ -14,20 +14,24 @@ It takes in common date patterns and encourages the use of an ISO date portion f
   npm install @calummm/simpledate --save
 ```
 
-## ⌨️ Usage
+## 💻 Usage
 
-```
-  const dateOne = new SimpleDate('10/05/2023');
+```javascript
+const dateOne = new SimpleDate('10/05/2023');
 
-  let dateTwo = new SimpleDate('10/05/2023');
+let dateTwo = new SimpleDate('10/05/2023');
 
-  console.log(dateOne.isOnOrBefore(dateTwo)); // true
-  console.log(dateOne <= dateTwo); // true
+console.log(dateOne.isOnOrBefore(dateTwo)); // true
+console.log(dateOne <= dateTwo); // true
 
-  dateTwo = dateTwo.add(1, 'month');
+dateTwo = dateTwo.add(1, 'month');
 
-  console.log(dateOne.isAfter(dateTwo)); // false
+console.log(dateOne.isAfter(dateTwo)); // false
 
-  console.log(dateOne.iso); // '2023-05-10'
-  console.log(dateOne.date); // Date Wed May 10 2023 10:00:00 GMT+1000 (Australian Eastern Standard Time)
+console.log(dateOne.isAfter('10.10.2010')); // true
+
+console.log(new SimpleDate('29/02/2001').isValid); // false
+
+console.log(dateOne.iso); // '2023-05-10'
+console.log(dateOne.date); // Date Wed May 10 2023 10:00:00 GMT+1000 (Australian Eastern Standard Time)
 ```
