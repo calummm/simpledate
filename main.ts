@@ -42,10 +42,8 @@ export class SimpleDate {
     }
 
     if (month != null) {
-      // if (year month and day are string or number)
-      this.year = Number(this.date);
-      this.monthIndex = Number(this.month) - 1;
-      this.month = Number(month);
+      this.year = Number(date);
+      this.monthIndex = Number(month) - 1;
       this.day = Number(day);
     } else if (typeof date === 'string' && date !== this.invalidDateMessage) {
       // Remove ISO8601 time if present
@@ -122,10 +120,14 @@ export class SimpleDate {
     }
 
     // todo long medium short
-    return [this.day, this.month, this.year].join('/');
+    return [
+      String(this.day).padStart(2, '0'),
+      String(this.month).padStart(2, '0'),
+      String(this.year).padStart(4, '0'),
+    ].join('/');
   }
 
-  toValue(): number {
+  valueOf(): number {
     return this.serial;
   }
 
@@ -133,8 +135,7 @@ export class SimpleDate {
     if (!this.isValid) {
       return false;
     }
-
-    return this === this.normalise(comparisonDate);
+    return this.valueOf() === this.normalise(comparisonDate).valueOf();
   }
 
   isBefore(comparisonDate: SimpleDateInput): boolean {
@@ -142,7 +143,7 @@ export class SimpleDate {
       return false;
     }
 
-    return this < this.normalise(comparisonDate);
+    return this.valueOf() < this.normalise(comparisonDate).valueOf();
   }
 
   isAfter(comparisonDate: SimpleDateInput): boolean {
@@ -150,7 +151,7 @@ export class SimpleDate {
       return false;
     }
 
-    return this > this.normalise(comparisonDate);
+    return this.valueOf() > this.normalise(comparisonDate).valueOf();
   }
 
   isOnOrBefore(comparisonDate: SimpleDateInput): boolean {
@@ -158,7 +159,7 @@ export class SimpleDate {
       return false;
     }
 
-    return this >= this.normalise(comparisonDate);
+    return this.valueOf() <= this.normalise(comparisonDate).valueOf();
   }
 
   isOnOrAfter(comparisonDate: SimpleDateInput): boolean {
@@ -166,7 +167,7 @@ export class SimpleDate {
       return false;
     }
 
-    return this <= this.normalise(comparisonDate);
+    return this.valueOf() >= this.normalise(comparisonDate).valueOf();
   }
 
   /**
@@ -211,6 +212,22 @@ export class SimpleDate {
    */
   subtract(num: number, type: SimpleDateModPeriod): SimpleDate {
     return this.add(num * -1, type);
+  }
+
+  getNumberOfDaysTo(comparisonDate: SimpleDateInput): number {
+    if (!this.isValid) {
+      return NaN;
+    }
+
+    const comparison = this.normalise(comparisonDate);
+    if (!comparison.isValid) {
+      return NaN;
+    }
+
+    return (
+      Math.round(comparison.date.getTime() - this.date.getTime()) /
+      (24 * 60 * 60 * 1000) // ms to days
+    );
   }
 
   private normalise(date?: SimpleDateInput): SimpleDate {

@@ -1,5 +1,5 @@
 import { SimpleDate } from './main';
-import { describe, test, expect } from 'vitest';
+import { describe, test, expect, it } from 'vitest';
 
 describe('SimpleDate', () => {
   test.each`
@@ -37,6 +37,143 @@ describe('SimpleDate', () => {
     'constructor creates $expected when input is $input',
     ({ input, expected }) => {
       expect(new SimpleDate(input).toString()).toBe(expected);
+    }
+  );
+
+  test.each`
+    year      | month  | day     | expected
+    ${2023}   | ${3}   | ${4}    | ${'2023-03-04'}
+    ${'2023'} | ${'5'} | ${'6'}  | ${'2023-05-06'}
+    ${'2023'} | ${'a'} | ${'2'}  | ${'Invalid Date'}
+    ${'2023'} | ${'a'} | ${null} | ${'Invalid Date'}
+  `(
+    'constructor creates $expected when input is $year, $month, $day',
+    ({ year, month, day, expected }) => {
+      expect(new SimpleDate(year, month, day).toString()).toBe(expected);
+    }
+  );
+
+  it('should set internal date to be correct as of the input and display', () => {
+    const base = '2023-01-02';
+    const simpleDate = new SimpleDate(base);
+
+    expect(simpleDate.toString()).toBe(base);
+    expect(simpleDate.date).toStrictEqual(new Date(2023, 0, 2));
+  });
+
+  test.each`
+    dateOne                         | dateTwo                         | isEqualTo | isBefore | isOnOrBefore | isAfter  | isOnOrAfter
+    ${'2023-01-02'}                 | ${'2023-01-02'}                 | ${true}   | ${false} | ${true}      | ${false} | ${true}
+    ${'2023-01-01'}                 | ${'2023-01-02'}                 | ${false}  | ${true}  | ${true}      | ${false} | ${false}
+    ${'2023-01-02'}                 | ${'2023-01-01'}                 | ${false}  | ${false} | ${false}     | ${true}  | ${true}
+    ${'2023-01-02'}                 | ${'foo'}                        | ${false}  | ${false} | ${false}     | ${false} | ${false}
+    ${new SimpleDate('2023-01-02')} | ${new Date(2023, 0, 2)}         | ${true}   | ${false} | ${true}      | ${false} | ${true}
+    ${new Date(2023, 0, 2)}         | ${new SimpleDate('2023-01-02')} | ${true}   | ${false} | ${true}      | ${false} | ${true}
+    ${new Date(2023, 0, 1)}         | ${new SimpleDate('2023-01-01')} | ${true}   | ${false} | ${true}      | ${false} | ${true}
+    ${new Date(2023, 0, 1)}         | ${new SimpleDate('2023-01-02')} | ${false}  | ${true}  | ${true}      | ${false} | ${false}
+    ${'2023-01-a'}                  | ${'2023-01-02'}                 | ${false}  | ${false} | ${false}     | ${false} | ${false}
+    ${'2023-01-01'}                 | ${'2023-01-a'}                  | ${false}  | ${false} | ${false}     | ${false} | ${false}
+  `(
+    '$dateOne to $dateTwo isEqualTo($isEqualTo) isBefore($isBefore) isOnOrBefore($isOnOrBefore) isAfter($isAfter) isOnOrAfter($isOnOrAfter)',
+    ({
+      dateOne,
+      dateTwo,
+      isEqualTo,
+      isBefore,
+      isOnOrBefore,
+      isAfter,
+      isOnOrAfter,
+    }) => {
+      expect(new SimpleDate(dateOne).isEqualTo(dateTwo)).toBe(isEqualTo);
+      expect(new SimpleDate(dateOne).isBefore(dateTwo)).toBe(isBefore);
+      expect(new SimpleDate(dateOne).isOnOrBefore(dateTwo)).toBe(isOnOrBefore);
+      expect(new SimpleDate(dateOne).isAfter(dateTwo)).toBe(isAfter);
+      expect(new SimpleDate(dateOne).isOnOrAfter(dateTwo)).toBe(isOnOrAfter);
+    }
+  );
+
+  test.each`
+    input           | expected
+    ${'2023-01-02'} | ${'02/01/2023'}
+    ${''}           | ${'Invalid Date'}
+    ${null}         | ${'Invalid Date'}
+    ${undefined}    | ${'Invalid Date'}
+    ${'2001-02-29'} | ${'Invalid Date'}
+  `(
+    'should output $expected when toFormat is called',
+    ({ input, expected }) => {
+      expect(new SimpleDate(input).toFormat()).toBe(expected);
+    }
+  );
+
+  test.each`
+    date            | addition | type        | expected
+    ${'2023-01-14'} | ${1}     | ${'day'}    | ${'2023-01-15'}
+    ${'2023-01-14'} | ${'1'}   | ${'day'}    | ${'2023-01-15'}
+    ${'2023-01-14'} | ${2}     | ${'days'}   | ${'2023-01-16'}
+    ${'2023-01-14'} | ${1}     | ${'week'}   | ${'2023-01-21'}
+    ${'2023-01-14'} | ${2}     | ${'weeks'}  | ${'2023-01-28'}
+    ${'2023-01-14'} | ${4}     | ${'weeks'}  | ${'2023-02-11'}
+    ${'2023-01-14'} | ${1}     | ${'month'}  | ${'2023-02-14'}
+    ${'2023-01-14'} | ${2}     | ${'months'} | ${'2023-03-14'}
+    ${'2023-01-14'} | ${1}     | ${'year'}   | ${'2024-01-14'}
+    ${'2023-01-14'} | ${2}     | ${'years'}  | ${'2025-01-14'}
+    ${'2023-01-14'} | ${null}  | ${'days'}   | ${'2023-01-14'}
+    ${'2023-01-14'} | ${'🧀'}  | ${'days'}   | ${'2023-01-14'}
+    ${'2023-01-14'} | ${'0'}   | ${'days'}   | ${'2023-01-14'}
+  `(
+    'should output $expected when an addition of $addition $type',
+    ({ date, addition, type, expected }) => {
+      expect(new SimpleDate(date).add(addition, type).iso).toBe(expected);
+    }
+  );
+
+  test.each`
+    date            | subtract | type        | expected
+    ${'2023-01-14'} | ${1}     | ${'day'}    | ${'2023-01-13'}
+    ${'2023-01-14'} | ${'1'}   | ${'day'}    | ${'2023-01-13'}
+    ${'2023-01-14'} | ${2}     | ${'days'}   | ${'2023-01-12'}
+    ${'2023-01-14'} | ${1}     | ${'week'}   | ${'2023-01-07'}
+    ${'2023-01-14'} | ${2}     | ${'weeks'}  | ${'2022-12-31'}
+    ${'2023-01-14'} | ${4}     | ${'weeks'}  | ${'2022-12-17'}
+    ${'2023-01-14'} | ${1}     | ${'month'}  | ${'2022-12-14'}
+    ${'2023-01-14'} | ${2}     | ${'months'} | ${'2022-11-14'}
+    ${'2023-01-14'} | ${1}     | ${'year'}   | ${'2022-01-14'}
+    ${'2023-01-14'} | ${2}     | ${'years'}  | ${'2021-01-14'}
+    ${'2023-01-14'} | ${null}  | ${'days'}   | ${'2023-01-14'}
+    ${'2023-01-14'} | ${'🧀'}  | ${'days'}   | ${'2023-01-14'}
+    ${'2023-01-14'} | ${'0'}   | ${'days'}   | ${'2023-01-14'}
+  `(
+    'should output $expected when a subtraction of $subtract $type',
+    ({ date, subtract, type, expected }) => {
+      expect(new SimpleDate(date).subtract(subtract, type).iso).toBe(expected);
+    }
+  );
+
+  it('should throw an error when an incorrect add or subtract type is provided', () => {
+    const date = new SimpleDate('2023-01-14');
+
+    expect(() => {
+      date.add(1, '🧀' as any);
+    }).toThrow();
+
+    expect(() => {
+      date.subtract(1, '🐁' as any);
+    }).toThrow();
+  });
+
+  test.each`
+    dateOne         | dateTwo         | expected
+    ${'2023-01-14'} | ${'2023-01-14'} | ${0}
+    ${'2023-01-14'} | ${'2023-01-13'} | ${-1}
+    ${'2023-01-14'} | ${'2023-01-15'} | ${1}
+    ${'2023-01-14'} | ${'2023-03-02'} | ${47}
+    ${'2023-01-🧀'} | ${'2023-01-15'} | ${NaN}
+    ${'2023-01-14'} | ${'2023-01-🐁'} | ${NaN}
+  `(
+    '$dateOne getNumberOfDaysTo $dateTwo should output $expected',
+    ({ dateOne, dateTwo, type, expected }) => {
+      expect(new SimpleDate(dateOne).getNumberOfDaysTo(dateTwo)).toBe(expected);
     }
   );
 });

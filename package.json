@@ -34,6 +34,7 @@
     "esm": "^3.2.25"
   },
   "devDependencies": {
+    "@vitest/coverage-c8": "^0.31.0",
     "typescript": "^5.0.4",
     "vitest": "^0.31.0"
   },

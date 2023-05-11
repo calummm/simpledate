@@ -6,7 +6,7 @@ It takes in common date patterns and encourages the use of an ISO date portion f
 
 - Avoids arbitary times and time offsets between systems
 - Provides immutable objects (cannot be modified, only cloned)
-- Allows easy comparisons between dates using convinience functions or `> >= === <= <`
+- Allows easy comparisons between dates using convinience functions
 
 ## 💾 Installation
 
@@ -22,7 +22,6 @@ const dateOne = new SimpleDate('10/05/2023');
 let dateTwo = new SimpleDate('10/05/2023');
 
 console.log(dateOne.isOnOrBefore(dateTwo)); // true
-console.log(dateOne <= dateTwo); // true
 
 dateTwo = dateTwo.add(1, 'month');
 
