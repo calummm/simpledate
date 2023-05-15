@@ -1,6 +1,3 @@
-// ESM syntax is supported.
-export {};
-
 type SimpleDateInput = SimpleDate | Date | String;
 
 type SimpleDateModPeriod =
@@ -16,16 +13,16 @@ type SimpleDateModPeriod =
 export class SimpleDate {
   invalidDateMessage = 'Invalid Date';
 
-  year: number;
-  month: number;
-  monthIndex: number;
-  day: number;
+  year: number | undefined;
+  month: number | undefined;
+  monthIndex: number | undefined;
+  day: number | undefined;
 
-  date: Date;
-  isValid: boolean;
+  date: Date | undefined;
+  isValid: boolean = false;
 
   /** A date portion of an ISO8601 date */
-  iso: string;
+  iso: string = '';
 
   /** A serialised number formed from padded year, month and day. Ideal for comparing and sorting */
   serial = NaN;
@@ -33,7 +30,7 @@ export class SimpleDate {
   private readonly defaultDate = new Date();
 
   constructor(
-    date?: SimpleDateInput,
+    date: SimpleDateInput | number | string,
     month?: number | string,
     day?: number | string
   ) {
@@ -86,22 +83,28 @@ export class SimpleDate {
       this.day = date.getDate();
     }
 
-    this.isValid = this.isValidManual(this.year, this.monthIndex, this.day);
-    // this.isValid = !isNaN(this.date.getTime());
+    if (
+      this.year != undefined &&
+      this.monthIndex != undefined &&
+      this.day != undefined
+    ) {
+      this.isValid = this.isValidManual(this.year, this.monthIndex, this.day);
+      // this.isValid = !isNaN(this.date.getTime());
 
-    if (this.isValid) {
-      this.date = new Date(this.year, this.monthIndex, this.day, 0, 0, 0); // Need zeroing?
-      // this.date = new Date(this.year, this.monthIndex, this.day, 0, 0, 0); // Need zeroing?
-      this.month = this.monthIndex + 1;
+      if (this.isValid) {
+        this.date = new Date(this.year, this.monthIndex, this.day, 0, 0, 0); // Need zeroing?
+        // this.date = new Date(this.year, this.monthIndex, this.day, 0, 0, 0); // Need zeroing?
+        this.month = this.monthIndex + 1;
 
-      const parts = [
-        String(this.year).padStart(4, '0'),
-        String(this.month).padStart(2, '0'),
-        String(this.day).padStart(2, '0'),
-      ];
+        const parts = [
+          String(this.year).padStart(4, '0'),
+          String(this.month).padStart(2, '0'),
+          String(this.day).padStart(2, '0'),
+        ];
 
-      this.iso = parts.join('-');
-      this.serial = Number(parts.join(''));
+        this.iso = parts.join('-');
+        this.serial = Number(parts.join(''));
+      }
     }
 
     Object.freeze(this);
@@ -180,7 +183,7 @@ export class SimpleDate {
       return new SimpleDate(this);
     }
 
-    const refDate = new Date(this.date);
+    const refDate = new Date(this.date as Date);
 
     if (type === 'year' || type === 'years') {
       refDate.setFullYear(refDate.getFullYear() + Number(num));
@@ -225,7 +228,7 @@ export class SimpleDate {
     }
 
     return (
-      Math.round(comparison.date.getTime() - this.date.getTime()) /
+      Math.round(comparison.date!.getTime() - this.date!.getTime()) /
       (24 * 60 * 60 * 1000) // ms to days
     );
   }
@@ -235,7 +238,7 @@ export class SimpleDate {
       return date;
     }
 
-    return new SimpleDate(date);
+    return new SimpleDate(date as SimpleDateInput);
   }
 
   private isValidManual(
