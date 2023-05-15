@@ -41,11 +41,14 @@ describe('SimpleDate', () => {
   );
 
   test.each`
-    year      | month  | day     | expected
-    ${2023}   | ${3}   | ${4}    | ${'2023-03-04'}
-    ${'2023'} | ${'5'} | ${'6'}  | ${'2023-05-06'}
-    ${'2023'} | ${'a'} | ${'2'}  | ${'Invalid Date'}
-    ${'2023'} | ${'a'} | ${null} | ${'Invalid Date'}
+    year      | month         | day     | expected
+    ${2023}   | ${3}          | ${4}    | ${'2023-03-04'}
+    ${2023}   | ${'Feb'}      | ${4}    | ${'2023-02-04'}
+    ${2023}   | ${'February'} | ${4}    | ${'2023-02-04'}
+    ${23}     | ${'February'} | ${4}    | ${'2023-02-04'}
+    ${'2023'} | ${'5'}        | ${'6'}  | ${'2023-05-06'}
+    ${'2023'} | ${'a'}        | ${'2'}  | ${'Invalid Date'}
+    ${'2023'} | ${'a'}        | ${null} | ${'Invalid Date'}
   `(
     'constructor creates $expected when input is $year, $month, $day',
     ({ year, month, day, expected }) => {
