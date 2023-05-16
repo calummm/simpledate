@@ -2,6 +2,11 @@ import { SimpleDate } from './index';
 import { describe, test, expect, it } from 'vitest';
 
 describe('SimpleDate', () => {
+  const todayDate = new Date();
+  const todayIso = `${todayDate.getFullYear()}-${String(
+    todayDate.getMonth() + 1
+  ).padStart(2, '0')}-${String(todayDate.getDate()).padStart(2, '0')}`;
+
   test.each`
     input                           | expected
     ${'2023-01-02'}                 | ${'2023-01-02'}
@@ -19,6 +24,7 @@ describe('SimpleDate', () => {
     ${'2-1-2023'}                   | ${'2023-01-02'}
     ${'02-01-2023'}                 | ${'2023-01-02'}
     ${'2000-02-29'}                 | ${'2000-02-29'}
+    ${'today'}                      | ${todayIso}
     ${''}                           | ${'Invalid Date'}
     ${null}                         | ${'Invalid Date'}
     ${undefined}                    | ${'Invalid Date'}
@@ -96,16 +102,19 @@ describe('SimpleDate', () => {
   );
 
   test.each`
-    input           | expected
-    ${'2023-01-02'} | ${'02/01/2023'}
-    ${''}           | ${'Invalid Date'}
-    ${null}         | ${'Invalid Date'}
-    ${undefined}    | ${'Invalid Date'}
-    ${'2001-02-29'} | ${'Invalid Date'}
+    input           | format      | expected
+    ${'2023-01-02'} | ${null}     | ${'02/01/2023'}
+    ${'2023-01-02'} | ${'short'}  | ${'02/01/2023'}
+    ${'2023-01-02'} | ${'medium'} | ${'2 Jan 2023'}
+    ${'2023-01-02'} | ${'long'}   | ${'2 January 2023'}
+    ${''}           | ${null}     | ${'Invalid Date'}
+    ${null}         | ${null}     | ${'Invalid Date'}
+    ${undefined}    | ${null}     | ${'Invalid Date'}
+    ${'2001-02-29'} | ${null}     | ${'Invalid Date'}
   `(
-    'should output $expected when toFormat is called',
-    ({ input, expected }) => {
-      expect(new SimpleDate(input).toFormat()).toBe(expected);
+    'should output $expected when toFormat is called with format $format',
+    ({ input, format, expected }) => {
+      expect(new SimpleDate(input).toFormat(format)).toBe(expected);
     }
   );
 

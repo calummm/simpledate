@@ -29,6 +29,38 @@ export class SimpleDate {
 
   private readonly defaultDate = new Date();
 
+  private readonly longMonthNames = [
+    `January`,
+    `February`,
+    `March`,
+    `April`,
+    `May`,
+    `June`,
+    `July`,
+    `August`,
+    `September`,
+    `October`,
+    `November`,
+    `December`,
+  ];
+  private readonly shortMonthNames = [
+    `Jan`,
+    `Feb`,
+    `Mar`,
+    `Apr`,
+    `May`,
+    `Jun`,
+    `Jul`,
+    `Aug`,
+    `Sep`,
+    `Oct`,
+    `Nov`,
+    `Dec`,
+  ];
+  private readonly monthLengths = [
+    31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31,
+  ];
+
   /**
    * Create a SimpleDate instance that has no concept of time or timezones
    * SimpleDate can be created using a string, a date, or clone another SimpleDate
@@ -57,6 +89,10 @@ export class SimpleDate {
       _year = Number(date);
       _month = month;
       _day = Number(day);
+    } else if (date === 'today') {
+      _year = this.defaultDate.getFullYear();
+      _month = this.defaultDate.getMonth() + 1;
+      _day = this.defaultDate.getDate();
     } else if (typeof date === 'string' && date !== this.invalidDateMessage) {
       let datePart = date;
       // Remove ISO8601 time if present
@@ -144,12 +180,26 @@ export class SimpleDate {
     return this.isValid ? this.iso : this.invalidDateMessage;
   }
 
-  toFormat(type?: any): string {
+  toFormat(format?: 'iso' | 'long' | 'medium' | 'short'): string {
     if (!this.isValid) {
       return this.invalidDateMessage;
     }
 
-    // todo long medium short
+    if (format === 'iso') {
+      return this.iso;
+    }
+
+    if (format === 'long') {
+      return `${this.day} ${this.longMonthNames[this.monthIndex!]} ${
+        this.year
+      }`;
+    }
+    if (format === 'medium') {
+      return `${this.day} ${this.shortMonthNames[this.monthIndex!]} ${
+        this.year
+      }`;
+    }
+
     return [
       String(this.day).padStart(2, '0'),
       String(this.month).padStart(2, '0'),
@@ -291,13 +341,11 @@ export class SimpleDate {
       return false;
     }
 
-    const monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-
     // Leap years
     if (year % 400 === 0 || (year % 100 !== 0 && year % 4 === 0)) {
-      monthLength[1] = 29;
+      this.monthLengths[1] = 29;
     }
 
-    return day <= monthLength[monthIndex];
+    return day <= this.monthLengths[monthIndex];
   }
 }
