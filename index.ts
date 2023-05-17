@@ -180,9 +180,12 @@ export class SimpleDate {
     return this.isValid ? this.iso : this.invalidDateMessage;
   }
 
-  toFormat(format?: 'iso' | 'long' | 'medium' | 'short'): string {
+  toFormat(
+    format?: 'iso' | 'long' | 'medium' | 'short',
+    invalidDateMessage?: string
+  ): string {
     if (!this.isValid) {
-      return this.invalidDateMessage;
+      return invalidDateMessage ?? this.invalidDateMessage;
     }
 
     if (format === 'iso') {

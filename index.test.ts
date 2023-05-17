@@ -102,19 +102,22 @@ describe('SimpleDate', () => {
   );
 
   test.each`
-    input           | format      | expected
-    ${'2023-01-02'} | ${null}     | ${'02/01/2023'}
-    ${'2023-01-02'} | ${'short'}  | ${'02/01/2023'}
-    ${'2023-01-02'} | ${'medium'} | ${'2 Jan 2023'}
-    ${'2023-01-02'} | ${'long'}   | ${'2 January 2023'}
-    ${''}           | ${null}     | ${'Invalid Date'}
-    ${null}         | ${null}     | ${'Invalid Date'}
-    ${undefined}    | ${null}     | ${'Invalid Date'}
-    ${'2001-02-29'} | ${null}     | ${'Invalid Date'}
+    input           | format      | invalidMessage | expected
+    ${'2023-01-02'} | ${null}     | ${null}        | ${'02/01/2023'}
+    ${'2023-01-02'} | ${'short'}  | ${null}        | ${'02/01/2023'}
+    ${'2023-01-02'} | ${'medium'} | ${null}        | ${'2 Jan 2023'}
+    ${'2023-01-02'} | ${'long'}   | ${null}        | ${'2 January 2023'}
+    ${''}           | ${null}     | ${null}        | ${'Invalid Date'}
+    ${null}         | ${null}     | ${null}        | ${'Invalid Date'}
+    ${null}         | ${null}     | ${'💀'}        | ${'💀'}
+    ${undefined}    | ${null}     | ${null}        | ${'Invalid Date'}
+    ${'2001-02-29'} | ${null}     | ${null}        | ${'Invalid Date'}
   `(
-    'should output $expected when toFormat is called with format $format',
-    ({ input, format, expected }) => {
-      expect(new SimpleDate(input).toFormat(format)).toBe(expected);
+    'should output $expected when toFormat is called with format $format and invalidMessage $invalidMessage',
+    ({ input, format, invalidMessage, expected }) => {
+      expect(new SimpleDate(input).toFormat(format, invalidMessage)).toBe(
+        expected
+      );
     }
   );
 
