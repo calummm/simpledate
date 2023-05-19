@@ -39,6 +39,7 @@ describe('SimpleDate', () => {
     ${'Invalid Date'}               | ${'Invalid Date'}
     ${new SimpleDate('2023-01-02')} | ${'2023-01-02'}
     ${new Date('2023-01-02')}       | ${'2023-01-02'}
+    ${1684417075404}                | ${'2023-05-18'}
   `(
     'constructor creates $expected when input is $input',
     ({ input, expected }) => {
@@ -102,16 +103,18 @@ describe('SimpleDate', () => {
   );
 
   test.each`
-    input           | format      | invalidMessage | expected
-    ${'2023-01-02'} | ${null}     | ${null}        | ${'02/01/2023'}
-    ${'2023-01-02'} | ${'short'}  | ${null}        | ${'02/01/2023'}
-    ${'2023-01-02'} | ${'medium'} | ${null}        | ${'2 Jan 2023'}
-    ${'2023-01-02'} | ${'long'}   | ${null}        | ${'2 January 2023'}
-    ${''}           | ${null}     | ${null}        | ${'Invalid Date'}
-    ${null}         | ${null}     | ${null}        | ${'Invalid Date'}
-    ${null}         | ${null}     | ${'💀'}        | ${'💀'}
-    ${undefined}    | ${null}     | ${null}        | ${'Invalid Date'}
-    ${'2001-02-29'} | ${null}     | ${null}        | ${'Invalid Date'}
+    input           | format       | invalidMessage | expected
+    ${'2023-01-02'} | ${null}      | ${null}        | ${'02/01/2023'}
+    ${'2023-01-02'} | ${'short'}   | ${null}        | ${'02/01/2023'}
+    ${'2023-01-02'} | ${'medium'}  | ${null}        | ${'2 Jan 2023'}
+    ${'2023-01-02'} | ${'long'}    | ${null}        | ${'2 January 2023'}
+    ${'2023-01-02'} | ${'iso'}     | ${null}        | ${'2023-01-02'}
+    ${'2023-01-02'} | ${'isotime'} | ${null}        | ${'2023-01-02T00:00:00.000Z'}
+    ${''}           | ${null}      | ${null}        | ${'Invalid Date'}
+    ${null}         | ${null}      | ${null}        | ${'Invalid Date'}
+    ${null}         | ${null}      | ${'💀'}        | ${'💀'}
+    ${undefined}    | ${null}      | ${null}        | ${'Invalid Date'}
+    ${'2001-02-29'} | ${null}      | ${null}        | ${'Invalid Date'}
   `(
     'should output $expected when toFormat is called with format $format and invalidMessage $invalidMessage',
     ({ input, format, invalidMessage, expected }) => {

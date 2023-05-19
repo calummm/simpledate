@@ -1,6 +1,6 @@
-type SimpleDateInput = SimpleDate | Date | String;
+export type SimpleDateInput = SimpleDate | Date | String;
 
-type SimpleDateModPeriod =
+export type SimpleDateModPeriod =
   | 'year'
   | 'years'
   | 'month'
@@ -68,7 +68,7 @@ export class SimpleDate {
    * SimpleDate instances are immutable to prevent common date issues. Updating a SimpleDate using add or subtract should be assigned to a new or existing variable
    * Parsing dates that contain month words are possible but not recommended due to environment/browser differences
    *
-   * @param {SimpleDateInput | number | string} date  yyyyMd or dMyy with forward-slash, hypen, dot or space delimiters (middle-endian is not supported) or a year
+   * @param {SimpleDate | Date | string | number} date  yyyyMd or dMyy with forward-slash, hypen, dot or space delimiters (middle-endian is not supported) or a year
    * @param {string | number} [month] a one based based month (1 is January) or month word. Number preferred
    * @param {string | number} [day] the day of the month
    */
@@ -180,8 +180,19 @@ export class SimpleDate {
     return this.isValid ? this.iso : this.invalidDateMessage;
   }
 
+  /**
+   * Supports
+   * - 'iso' yyyy-MM-dd
+   * - 'isotime' yyyy-MM-ddT00:00:00.000Z
+   * - 'long' d MMMM yyyy
+   * - 'medium' d MMM yyyy
+   * - 'short' dd/MM/yyyy
+   * @param {'iso' | 'isotime' | 'long' | 'medium' | 'short'} format
+   * @param {string} [invalidDateMessage=Invalid Date] An alternate message to return if the date is invalid.
+   * @returns {string} The date formatted
+   */
   toFormat(
-    format?: 'iso' | 'long' | 'medium' | 'short',
+    format?: 'iso' | 'isotime' | 'long' | 'medium' | 'short',
     invalidDateMessage?: string
   ): string {
     if (!this.isValid) {
@@ -190,6 +201,10 @@ export class SimpleDate {
 
     if (format === 'iso') {
       return this.iso;
+    }
+
+    if (format === 'isotime') {
+      return this.iso + `T00:00:00.000Z`;
     }
 
     if (format === 'long') {
@@ -214,6 +229,10 @@ export class SimpleDate {
     return this.serial;
   }
 
+  /**
+   * @param {SimpleDate | Date | string | number} comparisonDate
+   * @returns {boolean} true if the dates are equal
+   */
   isEqualTo(comparisonDate: SimpleDateInput): boolean {
     if (!this.isValid) {
       return false;
@@ -221,6 +240,10 @@ export class SimpleDate {
     return this.valueOf() === this.normalise(comparisonDate).valueOf();
   }
 
+  /**
+   * @param {SimpleDate | Date | string | number} comparisonDate
+   * @returns {boolean} true if the date is before the comparison date
+   */
   isBefore(comparisonDate: SimpleDateInput): boolean {
     if (!this.isValid) {
       return false;
@@ -229,6 +252,10 @@ export class SimpleDate {
     return this.valueOf() < this.normalise(comparisonDate).valueOf();
   }
 
+  /**
+   * @param {SimpleDate | Date | string | number} comparisonDate
+   * @returns {boolean} true if the date is after the comparison date
+   */
   isAfter(comparisonDate: SimpleDateInput): boolean {
     if (!this.isValid) {
       return false;
@@ -237,6 +264,10 @@ export class SimpleDate {
     return this.valueOf() > this.normalise(comparisonDate).valueOf();
   }
 
+  /**
+   * @param {SimpleDate | Date | string | number} comparisonDate
+   * @returns {boolean} true if the date is equal to or before the comparison date
+   */
   isOnOrBefore(comparisonDate: SimpleDateInput): boolean {
     if (!this.isValid) {
       return false;
@@ -245,6 +276,10 @@ export class SimpleDate {
     return this.valueOf() <= this.normalise(comparisonDate).valueOf();
   }
 
+  /**
+   * @param {SimpleDate | Date | string | number} comparisonDate
+   * @returns {boolean} true if the date is equal to or after the comparison date
+   */
   isOnOrAfter(comparisonDate: SimpleDateInput): boolean {
     if (!this.isValid) {
       return false;
@@ -256,7 +291,9 @@ export class SimpleDate {
   /**
    * Returns a new instance of SimpleDate in the future modified by the set type
    * Care should be taken around months as most systems should use multiples of 4 weeks instead
-   * @returns
+   * @param {number} num
+   * @param {'year' | 'years' | 'month' | 'months' | 'week' | 'weeks' | 'day' | 'days'} type
+   * @returns {SimpleDate} A new instance of a SimpleDate modified by the params
    */
   add(num: number, type: SimpleDateModPeriod): SimpleDate {
     if (!this.isValid || num == null || isNaN(Number(num)) || type == null) {
@@ -291,14 +328,16 @@ export class SimpleDate {
   /**
    * @see add
    * Returns a new instance of SimpleDate in the past modified by the set type
-   * @returns
+   * @param {number} num
+   * @param {'year' | 'years' | 'month' | 'months' | 'week' | 'weeks' | 'day' | 'days'} type
+   * @returns {SimpleDate} A new instance of a SimpleDate modified by the params
    */
   subtract(num: number, type: SimpleDateModPeriod): SimpleDate {
     return this.add(num * -1, type);
   }
 
   /**
-   * @param {SimpleDateInput} comparisonDate
+   * @param {SimpleDate | Date | string | number} comparisonDate
    * @returns {number} The number of days to the comparison date
    */
   getNumberOfDaysTo(comparisonDate: SimpleDateInput): number {
