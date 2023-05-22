@@ -64,20 +64,24 @@ export const isValidDate = (
   monthIndex: number | string,
   day: number | string
 ): boolean => {
-  if (isNaN(Number(year)) || isNaN(Number(monthIndex)) || isNaN(Number(day))) {
+  const _year = Number(year);
+  const _monthIndex = Number(monthIndex);
+  const _day = Number(day);
+
+  if (isNaN(_year) || isNaN(_monthIndex) || isNaN(_day)) {
     return false;
   }
 
-  if (monthIndex < 0 || monthIndex > 11 || day < 1 || day > 31) {
+  if (_monthIndex < 0 || _monthIndex > 11 || _day < 1 || _day > 31) {
     return false;
   }
 
   // If February and a leap year
-  if (monthIndex === 1 && isLeapYear(year)) {
-    return day <= 29;
+  if (_monthIndex === 1 && isLeapYear(_year)) {
+    return _day <= 29;
   }
 
-  return day <= monthLengths[monthIndex];
+  return _day <= monthLengths[_monthIndex];
 };
 
 export class SimpleDate {
