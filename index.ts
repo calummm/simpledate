@@ -10,6 +10,70 @@ export type SimpleDateModPeriod =
   | 'day'
   | 'days';
 
+export const longMonthNames = [
+  `January`,
+  `February`,
+  `March`,
+  `April`,
+  `May`,
+  `June`,
+  `July`,
+  `August`,
+  `September`,
+  `October`,
+  `November`,
+  `December`,
+];
+export const shortMonthNames = [
+  `Jan`,
+  `Feb`,
+  `Mar`,
+  `Apr`,
+  `May`,
+  `Jun`,
+  `Jul`,
+  `Aug`,
+  `Sep`,
+  `Oct`,
+  `Nov`,
+  `Dec`,
+];
+export const monthLengths = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+/**
+ * @param {number} year The current year
+ * @returns if the current year is a leap year
+ */
+export const isLeapYear = (year: number): boolean =>
+  year % 400 === 0 || (year % 100 !== 0 && year % 4 === 0);
+
+/**
+ * @param {number} year
+ * @param {number} monthIndex
+ * @param {number} day
+ * @returns {boolean} if the date is strictly valid. Unlike the built in date methods, this does not allow rollover
+ */
+export const isValidDate = (
+  year: number,
+  monthIndex: number,
+  day: number
+): boolean => {
+  if (Number.isNaN(year) || Number.isNaN(monthIndex) || Number.isNaN(day)) {
+    return false;
+  }
+
+  if (monthIndex < 0 || monthIndex > 11 || day < 1 || day > 31) {
+    return false;
+  }
+
+  // If February and a leap year
+  if (monthIndex === 1 && isLeapYear(year)) {
+    return day <= 29;
+  }
+
+  return day <= monthLengths[monthIndex];
+};
+
 export class SimpleDate {
   invalidDateMessage = 'Invalid Date';
 
@@ -28,38 +92,6 @@ export class SimpleDate {
   serial = NaN;
 
   private readonly defaultDate = new Date();
-
-  private readonly longMonthNames = [
-    `January`,
-    `February`,
-    `March`,
-    `April`,
-    `May`,
-    `June`,
-    `July`,
-    `August`,
-    `September`,
-    `October`,
-    `November`,
-    `December`,
-  ];
-  private readonly shortMonthNames = [
-    `Jan`,
-    `Feb`,
-    `Mar`,
-    `Apr`,
-    `May`,
-    `Jun`,
-    `Jul`,
-    `Aug`,
-    `Sep`,
-    `Oct`,
-    `Nov`,
-    `Dec`,
-  ];
-  private readonly monthLengths = [
-    31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31,
-  ];
 
   /**
    * Create a SimpleDate instance that has no concept of time or timezones
@@ -145,7 +177,7 @@ export class SimpleDate {
     }
 
     if (_year != undefined && _month != undefined && _day != undefined) {
-      this.isValid = this.isValidManual(
+      this.isValid = isValidDate(
         Number(_year),
         Number(_month) - 1,
         Number(_day)
@@ -208,14 +240,10 @@ export class SimpleDate {
     }
 
     if (format === 'long') {
-      return `${this.day} ${this.longMonthNames[this.monthIndex!]} ${
-        this.year
-      }`;
+      return `${this.day} ${longMonthNames[this.monthIndex!]} ${this.year}`;
     }
     if (format === 'medium') {
-      return `${this.day} ${this.shortMonthNames[this.monthIndex!]} ${
-        this.year
-      }`;
+      return `${this.day} ${shortMonthNames[this.monthIndex!]} ${this.year}`;
     }
 
     return [
@@ -362,32 +390,5 @@ export class SimpleDate {
     }
 
     return new SimpleDate(date as SimpleDateInput);
-  }
-
-  private isValidManual(
-    year: number,
-    monthIndex: number,
-    day: number
-  ): boolean {
-    if (Number.isNaN(year) || Number.isNaN(monthIndex) || Number.isNaN(day)) {
-      return false;
-    }
-
-    if (
-      //String(year).length !== 4 || // TODO
-      monthIndex < 0 ||
-      monthIndex > 11 ||
-      day < 1 ||
-      day > 31
-    ) {
-      return false;
-    }
-
-    // Leap years
-    if (year % 400 === 0 || (year % 100 !== 0 && year % 4 === 0)) {
-      this.monthLengths[1] = 29;
-    }
-
-    return day <= this.monthLengths[monthIndex];
   }
 }

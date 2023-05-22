@@ -1,10 +1,18 @@
 {
   "name": "@calummm/simpledate",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "",
   "types": "./dist/cjs/types/index.d.ts",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/calummm/simpledate"
+  },
+  "homepage": "https://github.com/calummm/simpledate#readme",
+  "bugs": {
+    "url": "https://github.com/calummm/simpledate/issues"
+  },
   "files": [
     "dist/**/*"
   ],

@@ -1,12 +1,12 @@
 # 📅 Simple date
 
-Simple date is focussed library. Unlike the native date implementation and many other date libraries, simpledate only cares about valid years, months and days. Simpledate is used when time and timezones do not matter, such as for validating birthday dates, outputting fixed dates for events and where multiple timezones simply do not matter.
+Simpledate is a focused date library. Unlike the native date implementation and many other date libraries, Simpledate only cares about valid years, months and days. Simpledate is useful when time and timezones do not matter, such as for validating birthday dates, outputting fixed dates for events and where multiple timezones simply do not matter.
 
 It takes in common date patterns and encourages the use of an ISO date portion for transmitting date information between systems.
 
-- Avoids arbitary times and time offsets between systems
+- Avoids arbitrary times and time offsets between systems
 - Provides immutable objects (cannot be modified, only cloned)
-- Allows easy comparisons between dates using convinience functions
+- Allows easy comparisons between dates using convenience functions
 
 ## 💾 Installation
 
@@ -32,5 +32,5 @@ console.log(dateOne.isAfter('10.10.2010')); // true
 console.log(new SimpleDate('29/02/2001').isValid); // false
 
 console.log(dateOne.iso); // '2023-05-10'
-console.log(dateOne.date); // Date Wed May 10 2023 10:00:00 GMT+1000 (Australian Eastern Standard Time)
+console.log(dateOne.date); // Date Wed May 10 2023 10:00:00 GMT+1000 (AEST)
 ```

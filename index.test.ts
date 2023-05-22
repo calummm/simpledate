@@ -1,5 +1,5 @@
+import { describe, expect, it, test } from 'vitest';
 import { SimpleDate } from './index';
-import { describe, test, expect, it } from 'vitest';
 
 describe('SimpleDate', () => {
   const todayDate = new Date();
