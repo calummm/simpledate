@@ -13,6 +13,13 @@
   "bugs": {
     "url": "https://github.com/calummm/simpledate/issues"
   },
+  "keywords": [
+    "date",
+    "simpledate",
+    "date formatting",
+    "date parsing",
+    "iso8601"
+  ],
   "files": [
     "dist/**/*"
   ],

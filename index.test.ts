@@ -1,5 +1,5 @@
 import { describe, expect, it, test } from 'vitest';
-import { SimpleDate } from './index';
+import { isLeapYear, SimpleDate } from './index';
 
 describe('SimpleDate', () => {
   const todayDate = new Date();
@@ -109,7 +109,8 @@ describe('SimpleDate', () => {
     ${'2023-01-02'} | ${'medium'}  | ${null}        | ${'2 Jan 2023'}
     ${'2023-01-02'} | ${'long'}    | ${null}        | ${'2 January 2023'}
     ${'2023-01-02'} | ${'iso'}     | ${null}        | ${'2023-01-02'}
-    ${'2023-01-02'} | ${'isotime'} | ${null}        | ${'2023-01-02T00:00:00.000Z'}
+    ${'2023-01-02'} | ${'isotime'} | ${null}        | ${'2023-01-02T00:00:00'}
+    ${'2023-01-02'} | ${'isofull'} | ${null}        | ${'2023-01-02T00:00:00.000Z'}
     ${''}           | ${null}      | ${null}        | ${'Invalid Date'}
     ${null}         | ${null}      | ${null}        | ${'Invalid Date'}
     ${null}         | ${null}      | ${'💀'}        | ${'💀'}
@@ -192,6 +193,20 @@ describe('SimpleDate', () => {
     '$dateOne getNumberOfDaysTo $dateTwo should output $expected',
     ({ dateOne, dateTwo, type, expected }) => {
       expect(new SimpleDate(dateOne).getNumberOfDaysTo(dateTwo)).toBe(expected);
+    }
+  );
+
+  test.each`
+    year      | expected
+    ${'2000'} | ${true}
+    ${2000}   | ${true}
+    ${'2001'} | ${false}
+    ${2001}   | ${false}
+    ${'a'}    | ${false}
+  `(
+    'isLeapYear should return $expected for year $year',
+    ({ year, expected }) => {
+      expect(isLeapYear(year)).toBe(expected);
     }
   );
 });

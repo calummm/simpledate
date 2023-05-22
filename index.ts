@@ -41,24 +41,30 @@ export const shortMonthNames = [
 export const monthLengths = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
 /**
- * @param {number} year The current year
+ * @param {number | string} year The current year
  * @returns if the current year is a leap year
  */
-export const isLeapYear = (year: number): boolean =>
-  year % 400 === 0 || (year % 100 !== 0 && year % 4 === 0);
+export const isLeapYear = (year: number | string): boolean => {
+  const _year = Number(year);
+  if (isNaN(_year)) {
+    return false;
+  }
+
+  return _year % 400 === 0 || (_year % 100 !== 0 && _year % 4 === 0);
+};
 
 /**
- * @param {number} year
- * @param {number} monthIndex
- * @param {number} day
+ * @param {number | string} year
+ * @param {number | string} monthIndex
+ * @param {number | string} day
  * @returns {boolean} if the date is strictly valid. Unlike the built in date methods, this does not allow rollover
  */
 export const isValidDate = (
-  year: number,
-  monthIndex: number,
-  day: number
+  year: number | string,
+  monthIndex: number | string,
+  day: number | string
 ): boolean => {
-  if (Number.isNaN(year) || Number.isNaN(monthIndex) || Number.isNaN(day)) {
+  if (isNaN(Number(year)) || isNaN(Number(monthIndex)) || isNaN(Number(day))) {
     return false;
   }
 
@@ -216,15 +222,16 @@ export class SimpleDate {
    * Supports
    * - 'iso' yyyy-MM-dd
    * - 'isotime' yyyy-MM-ddT00:00:00.000Z
+   * - 'isofull' yyyy-MM-ddT00:00:00.000Z
    * - 'long' d MMMM yyyy
    * - 'medium' d MMM yyyy
    * - 'short' dd/MM/yyyy
-   * @param {'iso' | 'isotime' | 'long' | 'medium' | 'short'} format
+   * @param {'iso' | 'isotime' | 'isofull' | 'long' | 'medium' | 'short'} format
    * @param {string} [invalidDateMessage=Invalid Date] An alternate message to return if the date is invalid.
    * @returns {string} The date formatted
    */
   toFormat(
-    format?: 'iso' | 'isotime' | 'long' | 'medium' | 'short',
+    format?: 'iso' | 'isotime' | 'isofull' | 'long' | 'medium' | 'short',
     invalidDateMessage?: string
   ): string {
     if (!this.isValid) {
@@ -236,6 +243,10 @@ export class SimpleDate {
     }
 
     if (format === 'isotime') {
+      return this.iso + `T00:00:00`;
+    }
+
+    if (format === 'isofull') {
       return this.iso + `T00:00:00.000Z`;
     }
 
