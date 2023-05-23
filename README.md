@@ -1,6 +1,6 @@
-[![Codecov Coverage](https://img.shields.io/codecov/c/github/calummm/simpledate/main.svg?style=flat-square)](https://codecov.io/gh/calummm/simpledate/)
-
 # 📅 Simple date
+
+[![Codecov Coverage](https://img.shields.io/codecov/c/github/calummm/simpledate/main.svg?style=flat-square)](https://codecov.io/gh/calummm/simpledate/)
 
 Simpledate is a focused date library. Unlike the native date implementation and many other date libraries, Simpledate only cares about valid years, months and days. Simpledate is useful when time and timezones do not matter, such as for validating birthday dates, outputting fixed dates for events and where multiple timezones simply do not matter.
 
