@@ -44,7 +44,8 @@
     "test": "vitest",
     "coverage": "vitest run --coverage",
     "lint": "eslint . --ext .ts",
-    "format": "prettier . --write"
+    "format": "prettier . --write",
+    "prepare": "husky install"
   },
   "author": "Calummm",
   "license": "ISC",
@@ -56,8 +57,15 @@
     "eslint": "^8.41.0",
     "eslint-config-prettier": "^8.8.0",
     "esm": "^3.2.25",
+    "husky": "^8.0.3",
     "prettier": "^2.8.8",
     "typescript": "^5.0.4",
     "vitest": "^0.31.0"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   }
 }
