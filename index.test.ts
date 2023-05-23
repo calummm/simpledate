@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, expect, it, test } from 'vitest';
 import { isLeapYear, SimpleDate } from './index';
 
@@ -191,7 +192,7 @@ describe('SimpleDate', () => {
     ${'2023-01-14'} | ${'2023-01-🐁'} | ${NaN}
   `(
     '$dateOne getNumberOfDaysTo $dateTwo should output $expected',
-    ({ dateOne, dateTwo, type, expected }) => {
+    ({ dateOne, dateTwo, expected }) => {
       expect(new SimpleDate(dateOne).getNumberOfDaysTo(dateTwo)).toBe(expected);
     }
   );

@@ -1,4 +1,4 @@
-export type SimpleDateInput = SimpleDate | Date | String;
+export type SimpleDateInput = SimpleDate | Date | string;
 
 export type SimpleDateModPeriod =
   | 'year'
@@ -93,7 +93,7 @@ export class SimpleDate {
   day: number | undefined;
 
   date: Date | undefined;
-  isValid: boolean = false;
+  isValid = false;
 
   /** A date portion of an ISO8601 date */
   iso: string = this.invalidDateMessage;
