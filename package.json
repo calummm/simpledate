@@ -1,6 +1,6 @@
 {
   "name": "@calummm/simpledate",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "types": "./dist/cjs/types/index.d.ts",
   "main": "./dist/cjs/index.js",
@@ -58,6 +58,7 @@
     "eslint-config-prettier": "^8.8.0",
     "esm": "^3.2.25",
     "husky": "^8.0.3",
+    "lint-staged": "^15.2.2",
     "prettier": "^2.8.8",
     "rimraf": "^5.0.5",
     "typescript": "^5.0.4",
