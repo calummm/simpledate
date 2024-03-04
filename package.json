@@ -36,7 +36,7 @@
     }
   },
   "scripts": {
-    "clean": "rm -rf ./dist",
+    "clean": "rimraf ./dist",
     "build": "npm run clean && npm run build:esm && npm run build:cjs",
     "build:esm": "tsc -p ./tsconfig.esm.json && cp dist/esm/index.js dist/esm/index.mjs",
     "build:cjs": "tsc -p ./tsconfig.cjs.json",
@@ -59,6 +59,7 @@
     "esm": "^3.2.25",
     "husky": "^8.0.3",
     "prettier": "^2.8.8",
+    "rimraf": "^5.0.5",
     "typescript": "^5.0.4",
     "vitest": "^0.31.0"
   },
